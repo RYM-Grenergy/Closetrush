@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     // Check auth status
@@ -19,82 +21,117 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isActive = (path) => location.pathname === path;
+
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-        ? "bg-[#141416]/80 backdrop-blur-xl border-b border-white/10 py-3"
-        : "bg-transparent py-5"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${scrolled
+        ? "bg-[#020617]/90 backdrop-blur-md border-white/10 py-4"
+        : "bg-transparent border-transparent py-6"
         }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2 group z-50 relative">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-pink-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-[0_0_15px_rgba(236,72,153,0.5)] group-hover:shadow-[0_0_25px_rgba(236,72,153,0.8)] transition-all">
-            C
+        <Link to="/" className="flex items-center gap-2 group relative z-50">
+          <div className="relative">
+            <div className="absolute inset-0 bg-cyan-500 blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-300" />
+            <span className="text-2xl md:text-3xl font-black italic tracking-tighter text-white relative z-10 transition-transform group-hover:scale-105 inline-block mix-blend-difference">
+              CLOSETRUSH
+              <span className="text-cyan-400">.</span>
+            </span>
           </div>
-          <span className="text-xl font-bold tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">
-            ClosetRush
-          </span>
-        </a>
+        </Link>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-          <a href="/explore" className="hover:text-cyan-400 transition-colors uppercase font-bold tracking-widest text-xs">EXPLORE CLOTHS</a>
-          <a href="/explore" className="hover:text-pink-400 transition-colors uppercase font-bold tracking-widest text-xs">WISHLIST</a>
-          <a href="#how" className="hover:text-white transition-colors">How it works</a>
-          <a href="#benefits" className="hover:text-white transition-colors">Benefits</a>
+        <div className="hidden md:flex items-center gap-10">
+          {[
+            { label: 'Explore Heat', path: '/explore' },
+            { label: 'Wishlist', path: '/explore' }, // Mapping to explore for now as requested
+            { label: 'How it Works', path: '#how' },
+          ].map((link, i) => (
+            <a
+              key={i}
+              href={link.path}
+              className={`relative text-[10px] font-mono font-bold uppercase tracking-[0.2em] transition-all hover:text-cyan-400 ${isActive(link.path) || location.pathname.includes(link.path) ? 'text-white' : 'text-gray-400'}`}
+            >
+              {link.label}
+              {/* Underline indicators for hover/active could go here */}
+            </a>
+          ))}
         </div>
 
         {/* Actions + Mobile Toggle */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           {isAuthenticated ? (
-            <a href="/dashboard" className="hidden sm:flex items-center gap-3 pl-4 border-l border-white/10 hover:opacity-80 transition-opacity">
+            <Link to="/dashboard" className="hidden sm:flex items-center gap-3 pl-6 border-l border-white/10 group">
               <div className="text-right hidden lg:block">
-                <div className="text-xs font-bold text-white uppercase tracking-widest">Alex Chen</div>
-                <div className="text-[10px] text-cyan-400 font-mono uppercase">Verified</div>
+                <div className="text-[10px] font-black text-white uppercase tracking-widest group-hover:text-cyan-400 transition-colors">Alex Chen</div>
+                <div className="text-[8px] text-gray-500 font-mono uppercase bg-white/5 px-1 rounded inline-block">Verified</div>
               </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 border border-white/20 shadow-[0_0_10px_rgba(6,182,212,0.5)]" />
-            </a>
+              <div className="relative">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-stone-800 to-black border border-white/20 group-hover:border-cyan-400/50 transition-colors overflow-hidden">
+                  {/* Placeholder Avatar */}
+                  <svg className="w-full h-full text-gray-600 p-2" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black" />
+              </div>
+            </Link>
           ) : (
-            <>
-              <a href="/login" className="hidden sm:block text-sm font-medium text-white hover:text-cyan-400 transition-colors">
+            <div className="hidden sm:flex items-center gap-4">
+              <Link to="/login" className="text-xs font-bold uppercase tracking-widest text-white hover:text-cyan-400 transition-colors">
                 Log in
-              </a>
-              <a
-                href="/signup"
-                className="hidden sm:block px-5 py-2.5 rounded-xl bg-white text-black text-sm font-bold hover:bg-cyan-50 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] hover:scale-105 active:scale-95 duration-300"
+              </Link>
+              <Link
+                to="/signup"
+                className="px-6 py-2.5 bg-white text-black text-xs font-black uppercase tracking-widest hover:bg-cyan-400 hover:scale-105 transition-all clip-path-slant"
+                style={{ clipPath: 'polygon(10% 0, 100% 0, 90% 100%, 0% 100%)' }}
               >
-                Sign Up
-              </a>
-            </>
+                Join Now
+              </Link>
+            </div>
           )}
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden relative z-50 p-2 text-white"
+            className="md:hidden relative z-50 p-2 text-white group"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-            )}
+            <div className="w-6 flex flex-col items-end gap-1.5">
+              <span className={`h-0.5 bg-current transition-all duration-300 ${mobileMenuOpen ? 'w-6 rotate-45 translate-y-2' : 'w-6'}`} />
+              <span className={`h-0.5 bg-current transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : 'w-4 group-hover:w-6'}`} />
+              <span className={`h-0.5 bg-current transition-all duration-300 ${mobileMenuOpen ? 'w-6 -rotate-45 -translate-y-2' : 'w-2 group-hover:w-6'}`} />
+            </div>
           </button>
         </div>
       </div>
 
       {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#141416] z-40 flex flex-col items-center justify-center space-y-8 p-8 md:hidden">
-          <a href="/explore" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-bold text-white hover:text-cyan-400 uppercase tracking-widest">EXPLORE CLOTHS</a>
-          <a href="/explore" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-bold text-white hover:text-pink-400 uppercase tracking-widest">WISHLIST</a>
-          <a href="#how" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-bold text-white">How it works</a>
-          <a href="#benefits" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-bold text-white">Benefits</a>
-          <hr className="w-20 border-white/20" />
-          <a href="/login" onClick={() => setMobileMenuOpen(false)} className="text-xl font-medium text-gray-300">Log in</a>
-          <a href="/signup" onClick={() => setMobileMenuOpen(false)} className="px-8 py-3 rounded-xl bg-white text-black text-lg font-bold">Sign Up</a>
+      <div className={`fixed inset-0 bg-[#020617] z-40 flex flex-col justify-center px-8 transition-transform duration-500 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="flex flex-col gap-8">
+          {[
+            { label: 'Explore Heat', path: '/explore' },
+            { label: 'Wishlist', path: '/explore' },
+            { label: 'How it Works', path: '#how' },
+            { label: 'Benefits', path: '#benefits' },
+          ].map((link, i) => (
+            <a
+              key={i}
+              href={link.path}
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-4xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600 hover:to-cyan-400 transition-all uppercase tracking-tighter"
+            >
+              {link.label}
+            </a>
+          ))}
         </div>
-      )}
+
+        {!isAuthenticated && (
+          <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8">
+            <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-xl font-bold text-gray-400 hover:text-white">Log In</Link>
+            <Link to="/signup" onClick={() => setMobileMenuOpen(false)} className="px-8 py-4 bg-white text-black text-center font-black uppercase tracking-widest">Sign Up Free</Link>
+          </div>
+        )}
+      </div>
     </nav>
   );
 }
