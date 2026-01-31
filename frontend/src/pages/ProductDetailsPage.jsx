@@ -55,8 +55,8 @@ export default function ProductDetailsPage() {
                         <div className="w-48 h-48 bg-black border border-white/10 p-4 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite]">
                             <svg className="w-full h-full text-white/20" viewBox="0 0 100 100">
                                 <path id="curve" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent" />
-                                <text width="500">
-                                    <textPath xlinkHref="#curve" className="uppercase font-mono font-bold text-[10px] tracking-[0.2em]">
+                                <text width="500" fill="white">
+                                    <textPath xlinkHref="#curve" className="uppercase font-mono font-bold text-[10px] tracking-[0.2em]" fill="white">
                                         • Verified Authentic • ClosetRush • Verified Authentic • ClosetRush •
                                     </textPath>
                                 </text>
