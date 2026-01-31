@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
-    <div className="relative min-h-screen bg-[#0b0220] overflow-hidden text-white pt-40 pb-20">
+    <div className="relative min-h-screen bg-transparent overflow-hidden text-white pt-40 pb-20">
 
       {/* Background Animated Blobs */}
       <motion.div

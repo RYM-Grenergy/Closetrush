@@ -51,7 +51,7 @@ const StepCard = ({ step, index }) => {
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500 pointer-events-none" />
 
-      <div className="relative h-full bg-[#0b0220] rounded-[22px] p-8 overflow-hidden z-10 flex flex-col items-start gap-6 border border-white/5 group-hover:border-white/20 transition-colors">
+      <div className="relative h-full bg-[#0f172a] rounded-[22px] p-8 overflow-hidden z-10 flex flex-col items-start gap-6 border border-white/5 group-hover:border-white/20 transition-colors">
 
         {/* Number Watermark */}
         <div className="absolute -right-4 -top-8 text-[120px] font-black text-white/5 select-none leading-none z-0 group-hover:text-white/10 transition-colors">
@@ -77,7 +77,7 @@ const StepCard = ({ step, index }) => {
 
 export default function HowItWorks() {
   return (
-    <section id="how" className="py-32 bg-[#0b0220] relative overflow-hidden">
+    <section id="how" className="py-32 bg-[#020617]/30 relative overflow-hidden">
       {/* Connecting Line (Mobile Hidden) */}
       <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent hidden lg:block" />
 

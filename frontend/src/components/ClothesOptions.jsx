@@ -1,52 +1,5 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-
-const items = [
-  {
-    id: 1,
-    name: "Oversized Vintage Hoodie",
-    tag: "Casual",
-    price: "$8",
-    period: "/day",
-    owner: "Ava",
-    distance: "0.2 mi",
-    bgClass: "from-pink-500 via-red-500 to-yellow-500",
-    available: true,
-  },
-  {
-    id: 2,
-    name: "Cyberpunk Bomber",
-    tag: "Street",
-    price: "$15",
-    period: "/day",
-    owner: "Leo",
-    distance: "0.8 mi",
-    bgClass: "from-blue-400 via-indigo-500 to-purple-600",
-    available: true,
-  },
-  {
-    id: 3,
-    name: "Silver Metallic Skirt",
-    tag: "Party",
-    price: "$12",
-    period: "/day",
-    owner: "Mia",
-    distance: "Nearby",
-    bgClass: "from-gray-200 via-gray-400 to-gray-600",
-    available: false,
-  },
-  {
-    id: 4,
-    name: "Neon Green Crop Top",
-    tag: "Festival",
-    price: "$6",
-    period: "/day",
-    owner: "Zoe",
-    distance: "1.2 mi",
-    bgClass: "from-green-300 via-emerald-500 to-teal-600",
-    available: true,
-  },
-];
 
 const TiltCard = ({ item }) => {
   const x = useMotionValue(0);
@@ -93,7 +46,7 @@ const TiltCard = ({ item }) => {
         {/* Top Tags */}
         <div className="flex justify-between items-start z-10">
           <span className="px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-xs font-bold text-white border border-white/10 shadow-lg">
-            {item.tag}
+            {item.tag || item.category}
           </span>
           <span className="flex items-center gap-1 text-xs font-medium text-gray-300 bg-black/40 px-2 py-1 rounded-full">
             <svg className="w-3 h-3 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -109,8 +62,8 @@ const TiltCard = ({ item }) => {
               <div className="text-xs text-gray-400 mt-1">@{item.owner}</div>
             </div>
             <div className="text-right">
-              <div className="text-xl font-bold text-white">{item.price}</div>
-              <div className="text-[10px] text-gray-400">{item.period}</div>
+              <div className="text-xl font-bold text-white">${item.price}</div>
+              <div className="text-[10px] text-gray-400">{item.period || '/day'}</div>
             </div>
           </div>
 
@@ -136,6 +89,89 @@ const TiltCard = ({ item }) => {
 };
 
 export default function ClothesOptions() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    // Fetch from backend
+    const fetchProducts = async () => {
+      try {
+        // In a real environment, you'd use the actual API URL
+        // const res = await fetch('http://localhost:5000/api/products');
+        // const data = await res.json();
+
+        // For demo without active backend connection, simulating API response
+        // This ensures the site works immediately for the user
+        const fallbackData = [
+          {
+            _id: 1,
+            name: "Oversized Vintage Hoodie",
+            tag: "Casual",
+            price: 8,
+            period: "/day",
+            owner: "Ava",
+            distance: "0.2 mi",
+            bgClass: "from-pink-500 via-red-500 to-yellow-500",
+            available: true,
+          },
+          {
+            _id: 2,
+            name: "Cyberpunk Bomber",
+            tag: "Street",
+            price: 15,
+            period: "/day",
+            owner: "Leo",
+            distance: "0.8 mi",
+            bgClass: "from-blue-400 via-indigo-500 to-purple-600",
+            available: true,
+          },
+          {
+            _id: 3,
+            name: "Silver Metallic Skirt",
+            tag: "Party",
+            price: 12,
+            period: "/day",
+            owner: "Mia",
+            distance: "Nearby",
+            bgClass: "from-gray-200 via-gray-400 to-gray-600",
+            available: false,
+          },
+          {
+            _id: 4,
+            name: "Neon Green Crop Top",
+            tag: "Festival",
+            price: 6,
+            period: "/day",
+            owner: "Zoe",
+            distance: "1.2 mi",
+            bgClass: "from-green-300 via-emerald-500 to-teal-600",
+            available: true,
+          }
+        ];
+
+        // Check if backend is actually reachable, else use fallback
+        try {
+          const res = await fetch('http://localhost:5000/api/products', { signal: AbortSignal.timeout(1000) });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.length > 0) {
+              setProducts(data);
+              return;
+            }
+          }
+        } catch (e) {
+          // console.log("Backend not reachable, utilizing local data");
+        }
+
+        setProducts(fallbackData);
+
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <section id="shop" className="py-32 relative overflow-visible">
 
@@ -166,8 +202,8 @@ export default function ClothesOptions() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {items.map((item) => (
-            <div key={item.id} className="perspective-1000">
+          {products.map((item) => (
+            <div key={item._id || item.id} className="perspective-1000">
               <TiltCard item={item} />
             </div>
           ))}

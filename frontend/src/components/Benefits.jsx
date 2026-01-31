@@ -42,7 +42,7 @@ const benefits = [
 
 export default function Benefits() {
   return (
-    <section id="benefits" className="py-32 relative overflow-hidden bg-[#0b0220]">
+    <section id="benefits" className="py-32 relative overflow-hidden bg-[#020617]/50">
       {/* Background blobs */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-600/5 blur-[120px] rounded-full pointer-events-none" />
 
