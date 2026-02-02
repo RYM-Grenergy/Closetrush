@@ -8,7 +8,22 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*'
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    // Normalize origins (remove trailing slashes)
+    const allowedOrigin = process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, '') : '*';
+    const requestOrigin = origin.replace(/\/$/, '');
+
+    if (allowedOrigin === '*' || allowedOrigin === requestOrigin) {
+      callback(null, true);
+    } else {
+      console.log(`BLOCKED BY CORS: Request from ${origin} does not match ${allowedOrigin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
 }));
 
 // Connect to MongoDB
