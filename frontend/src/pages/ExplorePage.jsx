@@ -1,84 +1,168 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import config from '../config';
 
 export default function ExplorePage() {
-    const { products, loading, error } = useProducts();
+    const [selectedCategory, setSelectedCategory] = useState("ALL DROPS");
+
+    const catMap = {
+        'ALL DROPS': 'All',
+        'ARCHIVE': 'ARCHIVE',
+        'Y2K': 'Y2K',
+        'STREETWEAR': 'STREETWEAR',
+        'ACCESSORIES': 'ACCESSORIES'
+    };
+
+    const backendCat = catMap[selectedCategory] || 'All';
+    const apiUrl = `${config.API_URL}/products${backendCat !== 'All' ? `?category=${backendCat}` : ''}`;
+    const { products, loading, error } = useProducts(apiUrl);
 
     return (
         <div className="min-h-screen bg-[#020617] text-white font-sans selection:bg-cyan-500 selection:text-black">
             <Navbar />
 
             <div className="pt-32 pb-20 max-w-7xl mx-auto px-6">
-                {/* Header */}
+                {/* Header Section */}
                 <div className="flex flex-col items-center text-center mb-16">
+                    <div className="flex items-center gap-2 mb-4">
+                        <div className="w-1.5 h-1.5 rounded-full bg-orange-600 animate-pulse" />
+                        <span className="text-[10px] font-black tracking-[0.3em] text-zinc-500 uppercase">Real-time feed</span>
+                        <span className="text-[10px] text-zinc-700 mx-1">•</span>
+                        <span className="text-[10px] font-bold text-zinc-400">{products.length} Active Listings</span>
+                    </div>
+
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-block"
                     >
-                        <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-gray-500 mb-4">
-                            Explore Heat
+                        <h1 className="text-7xl md:text-9xl font-black italic tracking-tighter uppercase text-white mb-8">
+                            EXPLORE <span className="text-orange-600">HEAT.</span>
                         </h1>
                     </motion.div>
-                    <p className="text-xl text-gray-400 font-mono tracking-widest uppercase">
-                        Real-time feed • {products.length} Active Listings
-                    </p>
-                </div>
 
-                {/* Filters */}
-                <div className="flex justify-center gap-4 mb-12 overflow-x-auto pb-4 scrollbar-hide">
-                    {['ALL DROPS', 'ARCHIVE', 'Y2K', 'STREETWEAR', 'ACCESSORIES'].map((tag, i) => (
-                        <button key={i} className={`px-6 py-3 rounded-none border border-white/20 text-xs font-black uppercase tracking-[0.2em] transform transition-all hover:bg-white hover:text-black ${i === 0 ? 'bg-white text-black' : 'bg-transparent text-gray-500'}`}>
-                            {tag}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Grid */}
-                {loading ? (
-                    <div className="text-center py-20 font-black text-2xl animate-pulse tracking-widest text-[#22d3ee]">LOADING FEED...</div>
-                ) : error ? (
-                    <div className="text-center py-20 font-black text-red-500 tracking-widest">ERROR LOADING FEED</div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {products.map((item) => (
-                            <Link to={`/product/${item._id}`} key={item._id} className="group block">
-                                <div className="bg-[#0f0f11] border border-white/10 hover:border-cyan-400/50 transition-all duration-300 relative overflow-hidden">
-                                    <div className={`aspect-square ${item.bgClass || 'bg-gray-800'} relative`}>
-                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
-                                        <div className="absolute top-4 right-4 bg-black/80 backdrop-blur border border-white/20 px-3 py-1 text-xs font-mono font-bold text-cyan-400">
-                                            ${item.price}/DAY
-                                        </div>
-                                    </div>
-
-                                    <div className="p-6">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <h3 className="text-2xl font-black italic uppercase leading-none max-w-[80%]">
-                                                {item.name}
-                                            </h3>
-                                            <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
-                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex justify-between items-end border-t border-white/10 pt-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] text-gray-600 font-mono uppercase tracking-widest">Seller</span>
-                                                <span className="text-xs font-bold text-gray-300 hover:text-cyan-400 transition-colors">@{item.owner}</span>
-                                            </div>
-                                            <span className="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest border border-white/10 px-2 py-1 bg-white/5">
-                                                {item.size || 'ONE SIZE'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
+                    {/* Filters */}
+                    <div className="flex flex-wrap justify-center gap-3 mb-12">
+                        {Object.keys(catMap).map((tag) => (
+                            <button
+                                key={tag}
+                                onClick={() => setSelectedCategory(tag)}
+                                className={`px-6 py-3 border text-[10px] font-black uppercase tracking-[0.2em] transition-all transform hover:scale-105 active:scale-95 ${selectedCategory === tag ? 'bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'bg-transparent text-zinc-500 border-white/10 hover:border-white hover:text-white'}`}
+                            >
+                                {tag}
+                            </button>
                         ))}
                     </div>
+                </div>
+
+                {/* Feed Grid */}
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                        <div className="w-12 h-12 border-2 border-white/5 border-t-orange-600 rounded-full animate-spin" />
+                        <div className="text-[10px] font-black tracking-[0.5em] text-zinc-600 animate-pulse">SYNCING FEED...</div>
+                    </div>
+                ) : error ? (
+                    <div className="text-center py-32 font-black text-red-500 tracking-widest uppercase border border-red-500/20 bg-red-500/5 rounded-3xl">
+                        ERROR LOADING FEED
+                    </div>
+                ) : products.length === 0 ? (
+                    <div className="text-center py-32 border border-white/5 bg-white/[0.02] rounded-3xl">
+                        <div className="text-4xl mb-4 opacity-20">📦</div>
+                        <div className="text-[10px] font-black tracking-[0.4em] text-zinc-700 uppercase">No drops found in this sector.</div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <AnimatePresence mode="popLayout">
+                            {products.map((item) => (
+                                <motion.div
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    key={item._id}
+                                >
+                                    <Link to={`/product/${item._id}`} className="group block">
+                                        <div className="bg-[#08080a] border border-white/5 group-hover:border-orange-600/50 transition-all duration-500 relative overflow-hidden rounded-sm">
+                                            {/* Image Layer */}
+                                            <div className="aspect-square relative overflow-hidden bg-zinc-900">
+                                                {item.image ? (
+                                                    <img
+                                                        src={item.image}
+                                                        alt={item.name}
+                                                        className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+                                                    />
+                                                ) : (
+                                                    <div className={`w-full h-full bg-gradient-to-br ${item.bgClass || 'from-zinc-900 to-black'} opacity-40`} />
+                                                )}
+
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+
+                                                {/* Rented Overlay */}
+                                                {item.status !== 'active' && (
+                                                    <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+                                                        <span className="text-xl font-black italic text-white/20 uppercase tracking-widest -rotate-12 border-4 border-white/20 p-4">RENTED OUT</span>
+                                                    </div>
+                                                )}
+
+                                                {/* Price Badge */}
+                                                <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 text-[10px] font-black text-white tracking-tighter">
+                                                    {item.status === 'active' ? (
+                                                        <><span className="text-orange-600 mr-1">₹</span>{item.price}/DAY</>
+                                                    ) : (
+                                                        <span className="text-red-500">RENTED OUT</span>
+                                                    )}
+                                                </div>
+
+                                                {/* Condition Tag */}
+                                                <div className="absolute top-4 left-4">
+                                                    <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest bg-white/5 backdrop-blur px-2 py-1 border border-white/5">
+                                                        {item.condition || 'VINTAGE'}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {/* Info Layer */}
+                                            <div className="p-8">
+                                                <div className="mb-6">
+                                                    <h3 className="text-3xl font-black italic uppercase leading-none tracking-tighter group-hover:text-orange-500 transition-colors">
+                                                        {item.name}
+                                                    </h3>
+                                                </div>
+
+                                                <div className="flex justify-between items-end border-t border-white/5 pt-6">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-[10px] font-black text-zinc-600">
+                                                            {(item.owner || 'S')[0]}
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest">Seller</span>
+                                                            <span className="text-xs font-black text-zinc-300">@{item.owner}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="text-right">
+                                                        <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-[0.3em] block mb-1">Status</span>
+                                                        <span className={`text-[10px] font-black uppercase ${item.status === 'active' ? 'text-green-500' : 'text-red-500'}`}>
+                                                            {item.status === 'active' ? 'ACTIVE' : 'RENTED'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Hover Interaction Overlay */}
+                                            <div className="absolute bottom-0 left-0 h-1 bg-orange-600 w-0 group-hover:w-full transition-all duration-500" />
+                                        </div>
+                                    </Link>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
                 )}
+
+                {/* Visual Decor */}
+                <div className="fixed bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none" />
             </div>
         </div>
     );

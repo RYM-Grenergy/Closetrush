@@ -1,32 +1,33 @@
-import { useState, useEffect } from "react";
-import { MOCK_PRODUCTS } from "../data/mockData";
+import { useState, useEffect, useCallback } from "react";
+import config from '../config';
 
-export const useProducts = () => {
+export const useProducts = (url = `${config.API_URL}/products`) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetch('http://localhost:5000/api/products')
+    const fetchProducts = useCallback(() => {
+        if (!url) return;
+        setLoading(true);
+        fetch(url)
             .then(res => {
                 if (!res.ok) throw new Error("Failed to fetch feed");
                 return res.json();
             })
             .then(data => {
-                if (data.length === 0) {
-                    setProducts(MOCK_PRODUCTS); // Fallback if API returns empty
-                } else {
-                    setProducts(data);
-                }
+                setProducts(data);
                 setLoading(false);
             })
             .catch(err => {
-                console.warn("API Error, utilizing MOCK DATA:", err);
-                // Fallback to mock data instead of showing error
-                setProducts(MOCK_PRODUCTS);
+                console.error("API Error:", err);
+                setError(err.message);
                 setLoading(false);
             });
-    }, []);
+    }, [url]);
 
-    return { products, loading, error };
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
+
+    return { products, setProducts, loading, error, refetch: fetchProducts };
 };

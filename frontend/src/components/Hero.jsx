@@ -6,46 +6,26 @@ import Spotlight from "./ui/Spotlight";
 import { ShinyText } from "./ui/ShinyText";
 import { Walker, Climber, Floater } from "./ui/InteractiveCharacters";
 import { motion } from "framer-motion";
+import Aurora from "./ui/Aurora";
 
 export default function Hero() {
   return (
     <div className="relative min-h-screen bg-transparent overflow-hidden text-white pt-40 pb-20">
 
-      {/* Background Animated Blobs */}
-      <motion.div
-        animate={{
-          x: [0, 50, -50, 0],
-          y: [0, -50, 50, 0],
-          scale: [1, 1.2, 0.9, 1]
-        }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-700/20 rounded-full blur-[120px] pointer-events-none z-0"
-      />
-      <motion.div
-        animate={{
-          x: [0, -30, 30, 0],
-          y: [0, 40, -40, 0],
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none z-0"
-      />
+      {/* Aurora Background */}
+      <div className="absolute inset-0 z-0 opacity-40">
+        <Aurora
+          colorStops={["#7cff67", "#B19EEF", "#5227FF"]}
+          blend={0.5}
+          amplitude={1.0}
+          speed={1}
+        />
+      </div>
 
       <Spotlight className="relative w-full z-10 flex flex-col items-center" spotlightColor="rgba(255, 255, 255, 0.05)">
         <div className="relative max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
 
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm text-white mb-8 backdrop-blur-md shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-shadow cursor-default"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
-            </span>
-            The fashion marketplace for everyone
-          </motion.div>
+
 
           {/* Main Heading */}
           <h1 className="text-6xl md:text-8xl font-black leading-[0.9] tracking-tighter mb-6 relative z-20">
@@ -114,7 +94,7 @@ export default function Hero() {
           >
             <StatItem value={500} label="Active Closets" suffix="+" />
             <StatItem value={100} label="Verified Users" suffix="%" />
-            <StatItem value={25} label="Avg. Saving" prefix="$" />
+            <StatItem value={25} label="Avg. Saving" prefix="₹" />
             <div className="text-center group">
               <div className="text-4xl font-bold text-white font-[Space_Grotesk] group-hover:text-cyan-300 transition-colors">24/7</div>
               <div className="text-sm text-gray-400 font-medium uppercase tracking-wider mt-1">Support</div>

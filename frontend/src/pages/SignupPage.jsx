@@ -1,25 +1,47 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import config from '../config';
 
 export default function SignupPage() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        name: "",
+        username: "",
+        fullName: "",
         email: "",
         password: ""
     });
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleSignup = (e) => {
+    const handleSignup = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            const res = await fetch(`${config.API_URL}/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    username: formData.username,
+                    fullName: formData.fullName,
+                    email: formData.email,
+                    password: formData.password
+                }),
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                // Auto login or redirect to login
+                alert("Account created! Please login.");
+                navigate("/login");
+            } else {
+                alert(typeof data === 'string' ? data : "Signup failed");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong");
+        } finally {
             setIsLoading(false);
-            localStorage.setItem("user", "true");
-            navigate("/explore");
-        }, 1500);
+        }
     };
 
     return (
@@ -70,14 +92,25 @@ export default function SignupPage() {
 
                     <form onSubmit={handleSignup} className="space-y-4">
                         <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-2">Username</label>
+                            <input
+                                type="text"
+                                required
+                                className="w-full bg-[#1a1a1d] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all placeholder:text-gray-600"
+                                placeholder="e.g. alex_c"
+                                value={formData.username}
+                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                            />
+                        </div>
+                        <div>
                             <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
                             <input
                                 type="text"
                                 required
                                 className="w-full bg-[#1a1a1d] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all placeholder:text-gray-600"
                                 placeholder="e.g. Alex Smith"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                value={formData.fullName}
+                                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                             />
                         </div>
                         <div>
@@ -127,7 +160,7 @@ export default function SignupPage() {
                         </p>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

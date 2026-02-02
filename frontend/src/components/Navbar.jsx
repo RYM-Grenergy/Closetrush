@@ -46,36 +46,47 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-10">
           {[
             { label: 'Explore Heat', path: '/explore' },
-            { label: 'Wishlist', path: '/explore' }, // Mapping to explore for now as requested
-            { label: 'How it Works', path: '#how' },
+            { label: 'Wishlist', path: '/wishlist' },
           ].map((link, i) => (
-            <a
+            <Link
               key={i}
-              href={link.path}
+              to={link.path}
               className={`relative text-[10px] font-mono font-bold uppercase tracking-[0.2em] transition-all hover:text-cyan-400 ${isActive(link.path) || location.pathname.includes(link.path) ? 'text-white' : 'text-gray-400'}`}
             >
               {link.label}
               {/* Underline indicators for hover/active could go here */}
-            </a>
+            </Link>
           ))}
         </div>
 
         {/* Actions + Mobile Toggle */}
         <div className="flex items-center gap-6">
           {isAuthenticated ? (
-            <Link to="/dashboard" className="hidden sm:flex items-center gap-3 pl-6 border-l border-white/10 group">
-              <div className="text-right hidden lg:block">
-                <div className="text-[10px] font-black text-white uppercase tracking-widest group-hover:text-cyan-400 transition-colors">Alex Chen</div>
-                <div className="text-[8px] text-gray-500 font-mono uppercase bg-white/5 px-1 rounded inline-block">Verified</div>
-              </div>
-              <div className="relative">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-stone-800 to-black border border-white/20 group-hover:border-cyan-400/50 transition-colors overflow-hidden">
-                  {/* Placeholder Avatar */}
-                  <svg className="w-full h-full text-gray-600 p-2" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <div className="flex items-center gap-4">
+              <Link to="/dashboard" className="hidden sm:flex items-center gap-3 pl-6 border-l border-white/10 group">
+                <div className="text-right hidden lg:block">
+                  <div className="text-[10px] font-black text-white uppercase tracking-widest group-hover:text-cyan-400 transition-colors">
+                    {JSON.parse(localStorage.getItem('user') || '{}').username || 'User'}
+                  </div>
+                  <div className="text-[8px] text-gray-500 font-mono uppercase bg-white/5 px-1 rounded inline-block">Verified</div>
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black" />
-              </div>
-            </Link>
+                <div className="relative">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-stone-800 to-black border border-white/20 group-hover:border-cyan-400/50 transition-colors overflow-hidden flex items-center justify-center text-white font-bold uppercase">
+                    {(JSON.parse(localStorage.getItem('user') || '{}').username || 'U').charAt(0)}
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black" />
+                </div>
+              </Link>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('user');
+                  window.location.href = '/login';
+                }}
+                className="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Logout"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              </button>
+            </div>
           ) : (
             <div className="hidden sm:flex items-center gap-4">
               <Link to="/login" className="text-xs font-bold uppercase tracking-widest text-white hover:text-cyan-400 transition-colors">
@@ -109,19 +120,17 @@ export default function Navbar() {
       <div className={`fixed inset-0 bg-[#020617] z-40 flex flex-col justify-center px-8 transition-transform duration-500 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="flex flex-col gap-8">
           {[
-            { label: 'Explore Heat', path: '/explore' },
-            { label: 'Wishlist', path: '/explore' },
-            { label: 'How it Works', path: '#how' },
-            { label: 'Benefits', path: '#benefits' },
+            { label: "Explore Heat", path: "/explore" },
+            { label: "Wishlist", path: "/wishlist" },
           ].map((link, i) => (
-            <a
+            <Link
               key={i}
-              href={link.path}
+              to={link.path}
               onClick={() => setMobileMenuOpen(false)}
               className="text-4xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600 hover:to-cyan-400 transition-all uppercase tracking-tighter"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 

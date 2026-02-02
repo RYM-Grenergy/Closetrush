@@ -47,16 +47,13 @@ const StepCard = ({ step, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
-      className="group relative p-1 rounded-3xl bg-gradient-to-b from-white/10 to-white/5 hover:from-white/20 hover:to-white/10 transition-all duration-300 h-full"
+      className="group relative rounded-3xl transition-all duration-300 h-full"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500 pointer-events-none" />
 
-      <div className="relative h-full bg-[#0f172a] rounded-[22px] p-8 overflow-hidden z-10 flex flex-col items-start gap-6 border border-white/5 group-hover:border-white/20 transition-colors">
+      <div className="relative h-full bg-[#0f172a] rounded-[22px] p-8 overflow-hidden z-10 flex flex-col items-start gap-6 group-hover:border-white/10 transition-colors">
 
-        {/* Number Watermark */}
-        <div className="absolute -right-4 -top-8 text-[120px] font-black text-white/5 select-none leading-none z-0 group-hover:text-white/10 transition-colors">
-          {step.id}
-        </div>
+
 
         {/* Icon */}
         <div className={`relative z-10 w-16 h-16 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
@@ -79,7 +76,6 @@ export default function HowItWorks() {
   return (
     <section id="how" className="py-32 bg-[#020617]/30 relative overflow-hidden">
       {/* Connecting Line (Mobile Hidden) */}
-      <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent hidden lg:block" />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-20">

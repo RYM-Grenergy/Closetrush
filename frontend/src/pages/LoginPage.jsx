@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import config from '../config';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -8,15 +9,33 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            const res = await fetch(`${config.API_URL}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                localStorage.setItem("user", JSON.stringify(data));
+                if (data.role === 'admin') {
+                    navigate("/super-admin");
+                } else {
+                    navigate("/dashboard");
+                }
+            } else {
+                alert(data || "Login failed");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong");
+        } finally {
             setIsLoading(false);
-            localStorage.setItem("user", "true");
-            navigate("/explore");
-        }, 1500);
+        }
     };
 
     return (
