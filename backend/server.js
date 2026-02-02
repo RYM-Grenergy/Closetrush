@@ -12,10 +12,18 @@ app.use(cors({
 }));
 
 // Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+// Connect to MongoDB
+if (process.env.MONGO_URI) {
+  mongoose
+    .connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+    .then(() => console.log("MongoDB Connected"))
+    .catch((err) => console.log("MongoDB Connection Error:", err));
+} else {
+  console.error("CRITICAL: MONGO_URI is missing in environment variables!");
+}
 
 // Routes
 app.get("/", (req, res) => {
